@@ -11,28 +11,35 @@ vector<vector<int>> even_board;
 int max_odd_cnt = 0;
 int max_even_cnt = 0;
 
-int odd_dsf(int cnt) {
-	if (cnt == n-1) {
-		for(int i=0;i<vishop.size();i++){
-			std::cout<<vishop[i]<<" ";
-		}
-		std::cout<<"\n";
-		int odd_cnt = 0;
+int escape(){
+	// for(int i=0;i<vishop.size();i++){
+			// std::cout<<vishop[i]<<" ";
+		// }
+		// std::cout<<"\n";
+		int cnt = 0;
 		for (int i = 0; i < vishop.size(); i++) {
 			if (vishop[i] != -1) {
-				odd_cnt++;
+				cnt++;
 			}
-		}
-		if(visit[0]==false && board[n-1][n-1] ==1)
-			odd_cnt++;
+		}	
+		return cnt;
+	
+}
+
+int odd_dsf(int cnt) {
+	if (cnt == n) {
+		int odd_cnt =escape();
 		if (odd_cnt > ::max_odd_cnt) {
 			::max_odd_cnt = odd_cnt;
 		}
 		return 0;
 	}
-
+	int error=0;
 	for (int i = 0; i < odd_board[cnt].size(); i++) {
-		if (visit[i] == true) continue;
+		if (visit[i] == true) {
+			error++;
+			continue;
+			}
 		if (odd_board[cnt][i] == 1) {
 			visit[i] = true;
 			vishop.push_back(i);
@@ -43,32 +50,30 @@ int odd_dsf(int cnt) {
 		visit[i] = false;
 		vishop.pop_back();
 	}
+	if(error ==odd_board[cnt].size()){
+		int odd_cnt =escape();
+		if (odd_cnt > ::max_odd_cnt) {
+			::max_odd_cnt = odd_cnt;
+		}
+	}
 	return 0;
 }
 
 
 int even_dsf(int cnt) {
-	if (cnt == n - 1) {
-		
-		for(int i=0;i<vishop.size();i++){
-			std::cout<<vishop[i]<<" ";
-		}
-		std::cout<<"\n";
-		
-		int even_cnt = 0;
-		for (int i = 0; i < vishop.size(); i++) {
-			if (vishop[i] != -1) {
-				even_cnt++;
-			}
-		}
+	if (cnt == n - 1) {	
+		int even_cnt = escape();
 		if (even_cnt > ::max_even_cnt) {
 			::max_even_cnt = even_cnt;
 		}
 		return 0;
 	}
-
+	int error=0;
 	for (int i = 0; i < even_board[cnt].size(); i++) {
-		if (visit[i] == true) continue;
+		if (visit[i] == true) {	
+			error++;		
+			continue;
+		}
 		if (even_board[cnt][i] == 1) {
 			visit[i] = true;
 			vishop.push_back(i);
@@ -79,6 +84,13 @@ int even_dsf(int cnt) {
 		even_dsf(cnt + 1);
 		visit[i] = false;
 		vishop.pop_back();
+	}
+	
+	if(error ==even_board[cnt].size()){
+		int even_cnt =escape();
+		if (even_cnt > ::max_even_cnt) {
+			::max_even_cnt = even_cnt;
+		}
 	}
 	return 0;
 }
@@ -127,7 +139,7 @@ int main()
 	}
 	even_dsf(0);
 	if (n == 1) max_odd_cnt = board[0][0];
-	std::cout<<max_even_cnt+max_odd_cnt;
+	std::cout<<::max_even_cnt+::max_odd_cnt;
 	
 	//for (int i = 0; i < 2*n-1; i++) {
 	//	if ((i & 1) == 0) {
